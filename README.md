@@ -88,6 +88,7 @@ Have any feedback or questions? [Create a discussion](https://github.com/TwiN/ga
   - [Monitoring a UDP endpoint](#monitoring-a-udp-endpoint)
   - [Monitoring a SCTP endpoint](#monitoring-a-sctp-endpoint)
   - [Monitoring a WebSocket endpoint](#monitoring-a-websocket-endpoint)
+  - [Monitoring a gRPC endpoint](#monitoring-a-grpc-endpoint)
   - [Monitoring an endpoint using ICMP](#monitoring-an-endpoint-using-icmp)
   - [Monitoring an endpoint using DNS queries](#monitoring-an-endpoint-using-dns-queries)
   - [Monitoring an endpoint using STARTTLS](#monitoring-an-endpoint-using-starttls)
@@ -351,6 +352,7 @@ the client used to send the request.
 
 > 📝 Some of these parameters are ignored based on the type of endpoint. For instance, there's no certificate involved
 in ICMP requests (ping), therefore, setting `client.insecure` to `true` for an endpoint of that type will not do anything.
+`client.ignore-redirect` is ignored for gRPC.
 
 This default configuration is as follows:
 ```yaml
@@ -1547,6 +1549,29 @@ endpoints:
 
 The `[BODY]` placeholder contains the output of the query, and `[CONNECTED]`
 shows whether the connected was successfully established.
+
+### Monitoring a gRPC endpoint
+By prefixing `endpoints[].url` with `grpc://`, you can monitor gRPC endpoints
+at a very basic level.
+
+For example, to list all methods of the
+`grpc.reflection.v1alpha.ServerReflection` service:
+
+```yaml
+endpoints:
+  - name: example
+    url: "grpc://foo.com:443"
+    grpc:
+        verb: 'list'
+        service: 'grpc.reflection.v1alpha.ServerReflection'
+    client:
+        insecure: true
+    conditions:
+      - "[BODY] == pat(*grpc.reflection.v1alpha.ServerReflection.*)"
+```
+
+Gatus currently only supports inspecting servers that implement gRPC
+Reflection.
 
 ### Monitoring an endpoint using ICMP
 By prefixing `endpoints[].url` with `icmp:\\`, you can monitor endpoints at a very basic level using ICMP, or more
