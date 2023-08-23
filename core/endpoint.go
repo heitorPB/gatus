@@ -105,7 +105,7 @@ type Endpoint struct {
 	// GraphQL is whether to wrap the body in a query param ({"query":"$body"})
 	GraphQL bool `yaml:"graphql,omitempty"`
 
-	// gRPC specific configuration: verb (list or describe); service.
+	// gRPC specific configuration: verb; service.
 	GRPC *client.GRPCConfig `yaml:"grpc,omitempty"`
 
 	// Headers of the request
